@@ -37,38 +37,98 @@ bool vtable_consistent(std::uint64_t features,
     bool present;
   };
   const auto slots = std::to_array<FeatureSlot>({
-      {.feature = SUPPORTS_SPEAK, .present = vtable.speak != nullptr},
-      {.feature = SUPPORTS_SPEAK_TO_MEMORY,
-       .present = vtable.speak_to_memory != nullptr},
-      {.feature = SUPPORTS_BRAILLE, .present = vtable.braille != nullptr},
-      {.feature = SUPPORTS_OUTPUT, .present = vtable.output != nullptr},
-      {.feature = SUPPORTS_IS_SPEAKING,
-       .present = vtable.is_speaking != nullptr},
-      {.feature = SUPPORTS_STOP, .present = vtable.stop != nullptr},
-      {.feature = SUPPORTS_PAUSE, .present = vtable.pause != nullptr},
-      {.feature = SUPPORTS_RESUME, .present = vtable.resume != nullptr},
-      {.feature = SUPPORTS_SET_VOLUME, .present = vtable.set_volume != nullptr},
-      {.feature = SUPPORTS_GET_VOLUME, .present = vtable.get_volume != nullptr},
-      {.feature = SUPPORTS_SET_RATE, .present = vtable.set_rate != nullptr},
-      {.feature = SUPPORTS_GET_RATE, .present = vtable.get_rate != nullptr},
-      {.feature = SUPPORTS_SET_PITCH, .present = vtable.set_pitch != nullptr},
-      {.feature = SUPPORTS_GET_PITCH, .present = vtable.get_pitch != nullptr},
-      {.feature = SUPPORTS_REFRESH_VOICES,
-       .present = vtable.refresh_voices != nullptr},
-      {.feature = SUPPORTS_COUNT_VOICES,
-       .present = vtable.count_voices != nullptr},
-      {.feature = SUPPORTS_GET_VOICE_NAME,
-       .present = vtable.get_voice_name != nullptr},
-      {.feature = SUPPORTS_GET_VOICE_LANGUAGE,
-       .present = vtable.get_voice_language != nullptr},
-      {.feature = SUPPORTS_GET_VOICE, .present = vtable.get_voice != nullptr},
-      {.feature = SUPPORTS_SET_VOICE, .present = vtable.set_voice != nullptr},
-      {.feature = SUPPORTS_GET_CHANNELS,
-       .present = vtable.get_channels != nullptr},
-      {.feature = SUPPORTS_GET_SAMPLE_RATE,
-       .present = vtable.get_sample_rate != nullptr},
-      {.feature = SUPPORTS_GET_BIT_DEPTH,
-       .present = vtable.get_bit_depth != nullptr},
+      {
+          .feature = SUPPORTS_SPEAK,
+          .present = vtable.speak != nullptr,
+      },
+      {
+          .feature = SUPPORTS_SPEAK_TO_MEMORY,
+          .present = vtable.speak_to_memory != nullptr,
+      },
+      {
+          .feature = SUPPORTS_BRAILLE,
+          .present = vtable.braille != nullptr,
+      },
+      {
+          .feature = SUPPORTS_OUTPUT,
+          .present = vtable.output != nullptr,
+      },
+      {
+          .feature = SUPPORTS_IS_SPEAKING,
+          .present = vtable.is_speaking != nullptr,
+      },
+      {
+          .feature = SUPPORTS_STOP,
+          .present = vtable.stop != nullptr,
+      },
+      {
+          .feature = SUPPORTS_PAUSE,
+          .present = vtable.pause != nullptr,
+      },
+      {
+          .feature = SUPPORTS_RESUME,
+          .present = vtable.resume != nullptr,
+      },
+      {
+          .feature = SUPPORTS_SET_VOLUME,
+          .present = vtable.set_volume != nullptr,
+      },
+      {
+          .feature = SUPPORTS_GET_VOLUME,
+          .present = vtable.get_volume != nullptr,
+      },
+      {
+          .feature = SUPPORTS_SET_RATE,
+          .present = vtable.set_rate != nullptr,
+      },
+      {
+          .feature = SUPPORTS_GET_RATE,
+          .present = vtable.get_rate != nullptr,
+      },
+      {
+          .feature = SUPPORTS_SET_PITCH,
+          .present = vtable.set_pitch != nullptr,
+      },
+      {
+          .feature = SUPPORTS_GET_PITCH,
+          .present = vtable.get_pitch != nullptr,
+      },
+      {
+          .feature = SUPPORTS_REFRESH_VOICES,
+          .present = vtable.refresh_voices != nullptr,
+      },
+      {
+          .feature = SUPPORTS_COUNT_VOICES,
+          .present = vtable.count_voices != nullptr,
+      },
+      {
+          .feature = SUPPORTS_GET_VOICE_NAME,
+          .present = vtable.get_voice_name != nullptr,
+      },
+      {
+          .feature = SUPPORTS_GET_VOICE_LANGUAGE,
+          .present = vtable.get_voice_language != nullptr,
+      },
+      {
+          .feature = SUPPORTS_GET_VOICE,
+          .present = vtable.get_voice != nullptr,
+      },
+      {
+          .feature = SUPPORTS_SET_VOICE,
+          .present = vtable.set_voice != nullptr,
+      },
+      {
+          .feature = SUPPORTS_GET_CHANNELS,
+          .present = vtable.get_channels != nullptr,
+      },
+      {
+          .feature = SUPPORTS_GET_SAMPLE_RATE,
+          .present = vtable.get_sample_rate != nullptr,
+      },
+      {
+          .feature = SUPPORTS_GET_BIT_DEPTH,
+          .present = vtable.get_bit_depth != nullptr,
+      },
   });
   return std::ranges::all_of(slots, [features](const FeatureSlot &slot) {
     return ((features & slot.feature) != 0) == slot.present;
@@ -224,7 +284,10 @@ public:
       return std::unexpected(ready.error());
     const std::string owned{text};
     MemoryBridge bridge{
-        .callback = &callback, .userdata = userdata, .scratch = {}};
+        .callback = &callback,
+        .userdata = userdata,
+        .scratch = {},
+    };
     return to_result(registration->vtable.speak_to_memory(
         instance, owned.c_str(), &memory_trampoline, &bridge));
   }
@@ -377,7 +440,7 @@ static BackendFactory make_factory_impl(const PrismBackendVTable *vtable,
   auto registration = std::make_shared<CustomRegistration>(
       normalized, userdata, userdata_free, std::move(owner), features,
       std::move(name));
-  return [registration]() -> std::shared_ptr<TextToSpeechBackend> {
+  return [registration] -> std::shared_ptr<TextToSpeechBackend> {
     void *instance = registration->vtable.create != nullptr
                          ? registration->vtable.create(registration->userdata)
                          : registration->userdata;

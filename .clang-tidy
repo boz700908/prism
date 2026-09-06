@@ -19,3 +19,5 @@ Checks: '-*,
 WarningsAsErrors: '*'
 HeaderFilterRegex: '^(source|include)/.*'
 FormatStyle: file
+CheckOptions:
+  bugprone-signed-bitwise.IgnorePositiveIntegerLiterals: true

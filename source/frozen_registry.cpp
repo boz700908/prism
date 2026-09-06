@@ -243,10 +243,12 @@ BuilderResult RegistryBuilder::add(std::string name, int priority,
     if (r.id == new_id)
       return BuilderResult::DuplicateId;
   }
-  registrations.push_back(Registration{.id = new_id,
-                                       .name = std::move(name),
-                                       .priority = priority,
-                                       .factory = std::move(factory)});
+  registrations.push_back(Registration{
+      .id = new_id,
+      .name = std::move(name),
+      .priority = priority,
+      .factory = std::move(factory),
+  });
   if (out_id != nullptr)
     *out_id = new_id;
   return BuilderResult::Ok;
