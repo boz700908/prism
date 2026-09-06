@@ -13,6 +13,7 @@
 #include <new>
 #include <simdutf.h>
 #include <string>
+#include <utility>
 #ifdef __ANDROID__
 #include <jni.h>
 #endif
@@ -54,7 +55,7 @@ BackendFactory make_custom_factory(const PrismBackendVTable *vtable,
                                    std::uint64_t features, std::string name);
 
 static inline PrismError to_prism_error(BackendError e) {
-  return static_cast<PrismError>(static_cast<uint8_t>(e));
+  return static_cast<PrismError>(std::to_underlying(e));
 }
 
 static inline BackendId to_backend_id(PrismBackendId id) {
@@ -62,7 +63,7 @@ static inline BackendId to_backend_id(PrismBackendId id) {
 }
 
 static inline PrismBackendId to_prism_id(BackendId id) {
-  return static_cast<PrismBackendId>(id);
+  return std::to_underlying(id);
 }
 
 static PrismBackend *wrap_backend(std::shared_ptr<TextToSpeechBackend> impl) {
@@ -551,30 +552,32 @@ PRISM_API PRISM_NODISCARD PrismError PRISM_CALL prism_backend_get_bit_depth(
 
 PRISM_API PRISM_NODISCARD const char *PRISM_CALL
 prism_error_string(PrismError error) {
-  static const char *const strings[] = {"Success",
-                                        "Not initialized",
-                                        "Invalid parameter",
-                                        "Not implemented",
-                                        "No voices available",
-                                        "Voice not found",
-                                        "Speak failure",
-                                        "Memory failure",
-                                        "Range out of bounds",
-                                        "Internal backend error",
-                                        "Not speaking",
-                                        "Not paused",
-                                        "Already paused",
-                                        "Invalid UTF-8",
-                                        "Invalid operation",
-                                        "Already initialized",
-                                        "Backend not available",
-                                        "Unknown error",
-                                        "Invalid audio format",
-                                        "Internal backend limit exceeded",
-                                        "Backend entered undefined state",
-                                        "Shared library load failed",
-                                        "Shared library is not a Prism plugin",
-                                        "Incompatible plugin ABI"};
+  static const char *const strings[] = {
+      "Success",
+      "Not initialized",
+      "Invalid parameter",
+      "Not implemented",
+      "No voices available",
+      "Voice not found",
+      "Speak failure",
+      "Memory failure",
+      "Range out of bounds",
+      "Internal backend error",
+      "Not speaking",
+      "Not paused",
+      "Already paused",
+      "Invalid UTF-8",
+      "Invalid operation",
+      "Already initialized",
+      "Backend not available",
+      "Unknown error",
+      "Invalid audio format",
+      "Internal backend limit exceeded",
+      "Backend entered undefined state",
+      "Shared library load failed",
+      "Shared library is not a Prism plugin",
+      "Incompatible plugin ABI",
+  };
   static_assert(std::size(strings) == PRISM_ERROR_COUNT,
                 "Error string table size mismatches error count");
   if (static_cast<std::uint32_t>(error) >= PRISM_ERROR_COUNT)

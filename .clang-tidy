@@ -9,7 +9,7 @@ Checks: '-*,
          -modernize-use-trailing-return-type,
          -clang-analyzer-core.CallAndMessage,
          -readability-identifier-length,
-         - readability-braces-around-statements,
+         -readability-braces-around-statements,
          -readability-magic-numbers,
          -clang-analyzer-optin.core.EnumCastOutOfRange,
          -bugprone-easily-swappable-parameters,
@@ -21,3 +21,4 @@ HeaderFilterRegex: '^(source|include)/.*'
 FormatStyle: file
 CheckOptions:
   bugprone-signed-bitwise.IgnorePositiveIntegerLiterals: true
+  bugprone-reserved-identifier.AllowedIdentifiers: '_GNU_SOURCE'

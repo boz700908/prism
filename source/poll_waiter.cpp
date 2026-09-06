@@ -208,7 +208,8 @@ public:
       }
       if (r == 0)
         return Wake::Timer;
-      if ((pfd.revents & POLLIN) != 0) {
+      if ((static_cast<unsigned>(pfd.revents) &
+           static_cast<unsigned>(POLLIN)) != 0) {
         std::uint64_t v = 0;
         [[maybe_unused]] ssize_t n = read(efd, &v, sizeof(v));
         return Wake::Signal;

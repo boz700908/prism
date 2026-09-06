@@ -18,7 +18,7 @@ constexpr std::uint32_t default_interval = 1000;
 constexpr std::uint32_t default_debounce = 2;
 
 inline PrismBackendId to_prism_id(BackendId id) noexcept {
-  return static_cast<PrismBackendId>(static_cast<std::uint64_t>(id));
+  return static_cast<PrismBackendId>(std::to_underlying(id));
 }
 } // namespace
 

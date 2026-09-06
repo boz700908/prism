@@ -28,7 +28,7 @@ typedef enum {
 
 #ifdef _WIN32
 _Static_assert(sizeof(LONG) == 4, "fast_lock requires a 32-bit Windows LONG");
-#elif defined(__linux__)
+#elifdef __linux__
 _Static_assert(sizeof(int) == 4,
                "fast_lock requires a 32-bit Linux futex word");
 #endif
@@ -55,7 +55,7 @@ void fast_lock_acquire(fast_lock *lk) TSA_NO_THREAD_SAFETY_ANALYSIS {
 #elifdef __APPLE__
   os_unfair_lock_lock(&lk->inner);
 #elifdef __linux__
-  fast_lock_state expected = FAST_LOCK_UNLOCKED;
+  int expected = FAST_LOCK_UNLOCKED;
   if (__atomic_compare_exchange_n(&lk->state, &expected, FAST_LOCK_LOCKED,
                                   false, __ATOMIC_ACQUIRE, __ATOMIC_RELAXED))
     return;
@@ -84,9 +84,9 @@ void fast_lock_release(fast_lock *lk) TSA_NO_THREAD_SAFETY_ANALYSIS {
       InterlockedExchange(&lk->state, FAST_LOCK_UNLOCKED);
   if (previous == FAST_LOCK_CONTENDED)
     WakeByAddressSingle(&lk->state);
-#elif defined(__APPLE__)
+#elifdef __APPLE__
   os_unfair_lock_unlock(&lk->inner);
-#elif defined(__linux__)
+#elifdef __linux__
   const fast_lock_state previous =
       __atomic_exchange_n(&lk->state, FAST_LOCK_UNLOCKED, __ATOMIC_RELEASE);
   if (previous == FAST_LOCK_CONTENDED) {

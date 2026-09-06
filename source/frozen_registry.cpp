@@ -10,6 +10,7 @@
 #endif
 #include <ranges>
 #include <simdutf.h>
+#include <utility>
 
 FrozenRegistry::FrozenRegistry(std::vector<Registration> registrations)
     : refcount(1) {
@@ -20,7 +21,7 @@ FrozenRegistry::FrozenRegistry(std::vector<Registration> registrations)
 #endif
   entries.reserve(registrations.size());
   for (auto &reg : registrations) {
-    if (!seen.emplace(static_cast<std::uint64_t>(reg.id)).second) {
+    if (!seen.emplace(std::to_underlying(reg.id)).second) {
       continue;
     }
     entries.push_back(Entry{.reg = std::move(reg), .cached = {}});

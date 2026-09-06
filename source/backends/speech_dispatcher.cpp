@@ -98,9 +98,10 @@ public:
           addrinfo *result = nullptr;
           if (getaddrinfo(addr->inet_socket_host, port_str.c_str(), &hints,
                           &result) == 0) {
-            int fd =
-                socket(result->ai_family, result->ai_socktype | SOCK_NONBLOCK,
-                       result->ai_protocol);
+            const auto socktype =
+                static_cast<int>(static_cast<unsigned>(result->ai_socktype) |
+                                 static_cast<unsigned>(SOCK_NONBLOCK));
+            int fd = socket(result->ai_family, socktype, result->ai_protocol);
             if (fd >= 0) {
               int status = connect(fd, result->ai_addr, result->ai_addrlen);
               available = (status == 0) || (status < 0 && errno == EINPROGRESS);
@@ -384,11 +385,10 @@ public:
       return std::unexpected(BackendError::InternalBackendError);
     }
     if (spd_set_synthesis_voice(conn, voices[id].name.data()) != 0) {
-      if (!current_module.empty()) {
-        if (spd_set_output_module(conn, current_module.data()) != 0) {
-          current_module.clear();
-          return std::unexpected(BackendError::BackendEnteredUndefinedState);
-        }
+      if (!current_module.empty() &&
+          spd_set_output_module(conn, current_module.data()) != 0) {
+        current_module.clear();
+        return std::unexpected(BackendError::BackendEnteredUndefinedState);
       }
       return std::unexpected(BackendError::InternalBackendError);
     }

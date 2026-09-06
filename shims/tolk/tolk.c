@@ -202,7 +202,7 @@ static wchar_t *utf8_to_wchar(const char *src) {
   return buf;
 }
 
-TOLK_API void TOLK_CALL Tolk_Load(void) {
+TOLK_API void TOLK_CALL Tolk_Load() {
   fast_lock_acquire(&lock);
   if (loaded) {
     fast_lock_release(&lock);
@@ -245,14 +245,14 @@ TOLK_API void TOLK_CALL Tolk_Load(void) {
   fast_lock_release(&lock);
 }
 
-TOLK_API bool TOLK_CALL Tolk_IsLoaded(void) {
+TOLK_API bool TOLK_CALL Tolk_IsLoaded() {
   fast_lock_acquire(&lock);
   const bool result = loaded;
   fast_lock_release(&lock);
   return result;
 }
 
-TOLK_API void TOLK_CALL Tolk_Unload(void) {
+TOLK_API void TOLK_CALL Tolk_Unload() {
   fast_lock_acquire(&lock);
   if (!loaded) {
     fast_lock_release(&lock);
@@ -286,7 +286,7 @@ TOLK_API void TOLK_CALL Tolk_PreferSAPI(bool preferSAPI) {
   fast_lock_release(&lock);
 }
 
-TOLK_API const wchar_t *TOLK_CALL Tolk_DetectScreenReader(void) {
+TOLK_API const wchar_t *TOLK_CALL Tolk_DetectScreenReader() {
   static _Thread_local wchar_t buf[256];
   fast_lock_acquire(&lock);
   if (!loaded) {
@@ -304,7 +304,7 @@ TOLK_API const wchar_t *TOLK_CALL Tolk_DetectScreenReader(void) {
   return buf;
 }
 
-TOLK_API bool TOLK_CALL Tolk_HasSpeech(void) {
+TOLK_API bool TOLK_CALL Tolk_HasSpeech() {
   fast_lock_acquire(&lock);
   if (!loaded) {
     fast_lock_release(&lock);
@@ -320,7 +320,7 @@ TOLK_API bool TOLK_CALL Tolk_HasSpeech(void) {
   return (features & PRISM_BACKEND_SUPPORTS_SPEAK) != 0;
 }
 
-TOLK_API bool TOLK_CALL Tolk_HasBraille(void) {
+TOLK_API bool TOLK_CALL Tolk_HasBraille() {
   fast_lock_acquire(&lock);
   if (!loaded) {
     fast_lock_release(&lock);
@@ -399,7 +399,7 @@ TOLK_API bool TOLK_CALL Tolk_Braille(const wchar_t *str) {
   return err == PRISM_OK;
 }
 
-TOLK_API bool TOLK_CALL Tolk_IsSpeaking(void) {
+TOLK_API bool TOLK_CALL Tolk_IsSpeaking() {
   fast_lock_acquire(&lock);
   if (!loaded) {
     fast_lock_release(&lock);
@@ -418,7 +418,7 @@ TOLK_API bool TOLK_CALL Tolk_IsSpeaking(void) {
   return speaking;
 }
 
-TOLK_API bool TOLK_CALL Tolk_Silence(void) {
+TOLK_API bool TOLK_CALL Tolk_Silence() {
   fast_lock_acquire(&lock);
   if (!loaded) {
     fast_lock_release(&lock);

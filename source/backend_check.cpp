@@ -3,20 +3,21 @@
 #include "backend_catalog.h"
 #include <cstdint>
 #include <prism.h>
+#include <utility>
 
-#define U64(x) static_cast<std::uint64_t>(x)
 #define CHECK(macro, backend_const)                                            \
-  static_assert(U64(macro) == U64(backend_const),                              \
+  static_assert(static_cast<std::uint64_t>(macro) ==                           \
+                    std::to_underlying(backend_const),                         \
                 "Backend ID mismatch: " #macro)
 #define CHECK_ERROR(cpp_name, c_name)                                          \
-  static_assert(static_cast<std::uint8_t>(BackendError::cpp_name) == (c_name), \
+  static_assert(std::to_underlying(BackendError::cpp_name) == (c_name),        \
                 "BackendError::" #cpp_name " must equal " #c_name)
 #define CHECK_FEATURE(cpp_name, c_name)                                        \
   static_assert(BackendFeature::cpp_name ==                                    \
                     static_cast<std::uint64_t>(c_name),                        \
                 "BackendFeature::" #cpp_name " must equal " #c_name)
 
-static_assert(U64(PRISM_BACKEND_INVALID) == 0ULL,
+static_assert(static_cast<std::uint64_t>(PRISM_BACKEND_INVALID) == 0ULL,
               "PRISM_BACKEND_INVALID must be 0");
 CHECK(PRISM_BACKEND_SAPI, Backends::SAPI);
 CHECK(PRISM_BACKEND_AV_SPEECH, Backends::AVSpeech);
