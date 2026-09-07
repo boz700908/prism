@@ -390,8 +390,10 @@ private:
       return false;
     if (legacy_script == nullptr)
       return false;
-    ProcessSerialNumber psn = {.highLongOfPSN = 0,
-                               .lowLongOfPSN = kCurrentProcess};
+    ProcessSerialNumber psn = {
+        .highLongOfPSN = 0,
+        .lowLongOfPSN = kCurrentProcess,
+    };
     auto *const target = [NSAppleEventDescriptor
         descriptorWithDescriptorType:typeProcessSerialNumber
                                bytes:&psn
